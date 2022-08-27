@@ -5,32 +5,32 @@ import boto3
 from botocore.exceptions import ClientError
 import json
 
-AWS_REGION = input("Please enter the AWS_REGION")
+REGION = input("Please enter the AWS REGION: ")
 
 # this is the configration for the logger
 
-logger = logging.getLogger()
+logger_for = logging.getLogger()
 logging.basicConfig(level=logging.INFO,
                     format='%(asctime)s: %(levelname)s: %(message)s')
 
-vpc_client = boto3.client("ec2", region_name=AWS_REGION)
+subnet_client = boto3.client("ec2", region_name=REGION)
 
 
-def create_default_subnet(az):
+def create_subnet(az):
     try:
-        response = vpc_client.create_default_subnet(AvailabilityZone=az)
+        res = subnet_client.create_default_subnet(AvailabilityZone=az)
 
     except ClientError:
-        logger.exception('can not create default subnet.')
+        logger_for.exception('Oops sorry, Your default subnet is not created:')
         raise
     else:
-        return response
+        return res
 
 
 if __name__ == '__main__':
-    AvailabilityZone = input("Enter the availability zone")
-    logger.info(f'Please wait!! Creating default subnet...')
-    default_subnet = create_default_subnet(AvailabilityZone)
-    logger.info(
-        f'Wow!!, Your default Subnet is created with ID: \n{json.dumps(default_subnet, indent=4)}'
+    Zone  = input("Enter the availability zone: ")
+    logger_for.info(f'Please wait!! Creating default subnet...')
+    subnet = create_subnet(Zone)
+    logger_for.info(
+        f'Wow!!, Your default Subnet is created with ID: \n{json.dumps(subnet, indent=4)}'
     )
